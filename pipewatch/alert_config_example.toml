@@ -4,6 +4,8 @@
 [alerts.logging]
 # Enable logging-based alerts (uses Python logging module)
 enabled = true
+# Log level to use for alerts: DEBUG, INFO, WARNING, ERROR, CRITICAL
+level = "WARNING"
 
 [alerts.smtp]
 # Enable email alerts via SMTP
@@ -16,3 +18,7 @@ subject_prefix = "[pipewatch]"
 # Leave blank if authentication is not required
 username = ""
 password = ""
+# Use TLS (recommended when port is 587)
+use_tls = true
+# Timeout in seconds for SMTP connection
+timeout = 10
