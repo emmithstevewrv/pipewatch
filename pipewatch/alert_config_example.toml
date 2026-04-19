@@ -1,0 +1,18 @@
+# pipewatch alert backend configuration example
+# Copy relevant sections into your pipewatch config file.
+
+[alerts.logging]
+# Enable logging-based alerts (uses Python logging module)
+enabled = true
+
+[alerts.smtp]
+# Enable email alerts via SMTP
+enabled = false
+host = "smtp.example.com"
+port = 587
+sender = "pipewatch@example.com"
+recipients = ["ops@example.com", "oncall@example.com"]
+subject_prefix = "[pipewatch]"
+# Leave blank if authentication is not required
+username = ""
+password = ""
