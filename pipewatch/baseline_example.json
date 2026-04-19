@@ -1,0 +1,17 @@
+[
+  {
+    "name": "row_count",
+    "expected_value": 10000.0,
+    "tolerance_pct": 10.0
+  },
+  {
+    "name": "latency_ms",
+    "expected_value": 250.0,
+    "tolerance_pct": 20.0
+  },
+  {
+    "name": "error_rate",
+    "expected_value": 0.5,
+    "tolerance_pct": 50.0
+  }
+]
