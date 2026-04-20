@@ -87,3 +87,10 @@ def test_load_from_file(tmp_path):
     p.write_text(json.dumps(data))
     store = load_baseline_store(p)
     assert store.get("throughput") is not None
+
+
+def test_load_missing_file_raises(tmp_path):
+    """Loading a non-existent baseline file should raise FileNotFoundError."""
+    missing = tmp_path / "does_not_exist.json"
+    with pytest.raises(FileNotFoundError):
+        load_baseline_store(missing)
