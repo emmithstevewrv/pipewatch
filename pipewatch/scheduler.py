@@ -20,12 +20,14 @@ class MetricScheduler:
         self.task = task
         self._stop_event = threading.Event()
         self._thread: Optional[threading.Thread] = None
+        self._error_count: int = 0
 
     def start(self) -> None:
         """Start the scheduler in a background thread."""
         if self._thread and self._thread.is_alive():
             raise RuntimeError("Scheduler is already running.")
         self._stop_event.clear()
+        self._error_count = 0
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
         logger.info("Scheduler started with interval=%.1fs", self.interval)
@@ -42,9 +44,19 @@ class MetricScheduler:
             try:
                 self.task()
             except Exception as exc:  # pylint: disable=broad-except
-                logger.error("Scheduler task raised an exception: %s", exc)
+                self._error_count += 1
+                logger.error(
+                    "Scheduler task raised an exception (total errors: %d): %s",
+                    self._error_count,
+                    exc,
+                )
             self._stop_event.wait(self.interval)
 
     @property
     def running(self) -> bool:
         return self._thread is not None and self._thread.is_alive()
+
+    @property
+    def error_count(self) -> int:
+        """Return the number of exceptions raised by the task since last start."""
+        return self._error_count
