@@ -30,7 +30,15 @@ from pipewatch.display_forecasting import render_forecast_table, render_forecast
 )
 @click.pass_context
 def forecast_cmd(ctx: click.Context, horizon: int, min_samples: int, summary: bool) -> None:
-    """Forecast future metric values using linear regression."""
+    """Forecast future metric values using linear regression.
+
+    Reads metric history from the context object (if available) and applies
+    linear regression to project values ``horizon`` steps into the future.
+    Metrics with fewer than ``min_samples`` recorded values are skipped.
+    """
+    if horizon < 1:
+        raise click.BadParameter("Horizon must be at least 1.", param_hint="'--horizon'")
+
     history: MetricHistory = ctx.obj.get("history") if ctx.obj else None
     if history is None:
         history = MetricHistory()
