@@ -57,6 +57,12 @@ alerts:
     notify: slack
 ```
 
+You can specify a custom config file path using the `--config` flag:
+
+```bash
+pipewatch status --config /path/to/custom_config.yaml
+```
+
 ---
 
 ## License
