@@ -40,6 +40,20 @@ def _build_partitions(
     return [Partition(label=lbl, low=lo, high=hi) for lbl, lo, hi in bounds]
 
 
+def _validate_bounds(bounds: List[Tuple[str, float, float]]) -> None:
+    """Raise ``ValueError`` if any bound is malformed.
+
+    A bound is malformed when its ``low`` value is greater than or equal to
+    its ``high`` value, which would create an empty or inverted interval.
+    """
+    for label, low, high in bounds:
+        if low >= high:
+            raise ValueError(
+                f"Bound {label!r} has low={low} >= high={high}; "
+                "each interval must satisfy low < high."
+            )
+
+
 def partition_metric(
     history: MetricHistory,
     metric_name: str,
@@ -50,7 +64,10 @@ def partition_metric(
     Each bound is a ``(label, low, high)`` triple where the interval is
     ``[low, high)``.  Snapshots that fall outside every bound are ignored.
     Returns ``None`` when the metric has no recorded history.
+
+    Raises ``ValueError`` if any bound has ``low >= high``.
     """
+    _validate_bounds(bounds)
     snaps = history.snapshots(metric_name)
     if not snaps:
         return None
@@ -68,7 +85,11 @@ def partition_all(
     history: MetricHistory,
     bounds: List[Tuple[str, float, float]],
 ) -> Dict[str, List[Partition]]:
-    """Run :func:`partition_metric` for every known metric in *history*."""
+    """Run :func:`partition_metric` for every known metric in *history*.
+
+    Raises ``ValueError`` if any bound has ``low >= high``.
+    """
+    _validate_bounds(bounds)
     return {
         name: result
         for name in history.metric_names()
