@@ -45,7 +45,23 @@ def forecast_metric(
     horizon: int = 1,
     min_samples: int = 5,
 ) -> Optional[ForecastResult]:
-    """Forecast the next *horizon* value(s) for a metric using linear regression."""
+    """Forecast the next *horizon* value(s) for a metric using linear regression.
+
+    Args:
+        history: The MetricHistory instance containing recorded values.
+        metric: The metric to forecast.
+        horizon: Number of steps ahead to predict. Must be >= 1.
+        min_samples: Minimum number of recorded values required to produce a
+            forecast. Returns None if fewer samples are available.
+
+    Returns:
+        A ForecastResult, or None if there is insufficient data.
+
+    Raises:
+        ValueError: If horizon is less than 1.
+    """
+    if horizon < 1:
+        raise ValueError(f"horizon must be >= 1, got {horizon}")
     values = history.values(metric.name)
     if len(values) < min_samples:
         return None
