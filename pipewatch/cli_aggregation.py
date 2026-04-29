@@ -27,10 +27,17 @@ def aggregate_cmd(ctx: click.Context, window: int, metric: str | None) -> None:
         click.echo("No history available. Run 'pipewatch watch' first.", err=True)
         raise SystemExit(1)
 
+    if window <= 0:
+        click.echo("--window must be a positive integer.", err=True)
+        raise SystemExit(1)
+
     windows = aggregate_all(history, window_seconds=window)
 
     if metric:
         windows = [w for w in windows if w.metric_name == metric]
+        if not windows:
+            click.echo(f"No data found for metric '{metric}'.", err=True)
+            raise SystemExit(1)
 
     render_aggregation_table(windows, window_seconds=window)
     render_aggregation_summary(windows)
